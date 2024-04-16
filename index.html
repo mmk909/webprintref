@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adjustable Barcode Layout</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .barcode-container {
+            width: 300px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .barcode-image {
+            display: block;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="barcode-container">
+    <canvas id="barcode"></canvas>
+    <div class="form-group">
+        <label for="barcodeValue">Barcode Value:</label>
+        <input type="text" id="barcodeValue" value="123456789">
+    </div>
+    <div class="form-group">
+        <label for="barcodeType">Barcode Type:</label>
+        <select id="barcodeType">
+            <option value="code128">Code 128</option>
+            <option value="ean13">EAN-13</option>
+            <option value="upc">UPC-A</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="barcodeWidth">Barcode Width:</label>
+        <input type="number" id="barcodeWidth" value="2">
+    </div>
+    <div class="form-group">
+        <label for="pageSize">Page Size:</label>
+        <select id="pageSize">
+            <option value="A4">A4</option>
+            <option value="Letter">Letter</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="columns">Columns:</label>
+        <input type="number" id="columns" value="3">
+    </div>
+    <div class="form-group">
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" value="3">
+    </div>
+    <div class="form-group">
+        <label for="columnSpacing">Column Spacing (px):</label>
+        <input type="number" id="columnSpacing" value="10">
+    </div>
+    <div class="form-group">
+        <label for="rowSpacing">Row Spacing (px):</label>
+        <input type="number" id="rowSpacing" value="10">
+    </div>
+    <button id="generateBarcodeBtn">Generate Barcode</button>
+    <button id="printBarcodeBtn">Print Barcode</button>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $("#generateBarcodeBtn").click(function(){
+            var barcodeValue = $("#barcodeValue").val();
+            var barcodeType = $("#barcodeType").val();
+            var barcodeWidth = parseFloat($("#barcodeWidth").val());
+
+            JsBarcode("#barcode", barcodeValue, {
+                format: barcodeType,
+                width: barcodeWidth,
+                height: 100
+            });
+        });
+
+        $("#printBarcodeBtn").click(function(){
+            var pageSize = $("#pageSize").val();
+            var columns = parseInt($("#columns").val());
+            var rows = parseInt($("#rows").val());
+            var columnSpacing = parseInt($("#columnSpacing").val());
+            var rowSpacing = parseInt($("#rowSpacing").val());
+
+            var barcodeImage = new Image();
+            barcodeImage.src = $("#barcode")[0].toDataURL(); // Convert canvas to image
+            barcodeImage.onload = function() {
+                var printWindow = window.open('', '_blank');
+                var printDocument = printWindow.document;
+
+                printDocument.write('<html><head><title>Print Barcode</title></head><body style="margin: 0;">');
+                printDocument.write('<style>@page { size: ' + pageSize + '; } .barcode-row { margin-bottom: ' + rowSpacing + 'px; } .barcode-column { width: calc(100% / ' + columns + ' - ' + (columnSpacing * (columns - 1)) + 'px); float: left; margin-right: ' + columnSpacing + 'px; } .last-column { margin-right: 0; }</style>');
+
+                for (var i = 0; i < rows; i++) {
+                    printDocument.write('<div style="margin-bottom: ' + rowSpacing + 'px; display: flex; flex-direction: row;gap:' + columnSpacing + 'px; ">');
+                    for (var j = 0; j < columns; j++) {
+                        var classAttribute = (j === columns - 1) ? ' class="barcode-column last-column"' : ' class="barcode-column"';
+                        printDocument.write('<div' + classAttribute + '><img src="' + barcodeImage.src + '" style="width: auto; height: auto; object-fit: contain;"></div>');
+                    }
+                    printDocument.write('</div>'); // End of barcode row
+                }
+
+                printDocument.write('</body></html>');
+
+                // printDocument.close();
+                // printWindow.print();
+            };
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Page Size and Margin Print</title>
+  <style>
+    /* Regular styles for screen */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    /* Print-specific styles */
+    @media print {
+      body {
+        font-size: 14pt; /* Increase font size for better readability on paper */
+      }
+
+      h1 {
+        color: #000; /* Ensure headings are printed in black */
+      }
+
+      p {
+        margin-bottom: 10px; /* Reduce spacing between paragraphs */
+      }
+
+      .hide-on-print {
+        display: none; /* Hide elements with this class when printing */
+      }
+
+      /* Use CSS variables to set custom page width, height, and margins */
+      @page {
+        size: var(--page-width) var(--page-height); /* Set page size using CSS variables */
+        margin: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left); /* Set margins using CSS variables */
+      }
+    }
+  </style>
+</head>
+<body>
+<h1>Custom Page Size and Margin Print</h1>
+<p>This is a demo of how to allow users to specify the page width, height, and margins before printing.</p>
+<p>This paragraph will appear in both screen and print.</p>
+<p class="hide-on-print">This paragraph will be hidden when printing.</p>
+
+<!-- Form to input custom page width, height, and margins -->
+<form onsubmit="return setPageSizeAndMargins()">
+  <label for="width">Page Width (mm):</label>
+  <input type="number" id="width" name="width" value="210"> <!-- Default: A4 width (210mm) -->
+  <br>
+  <label for="height">Page Height (mm):</label>
+  <input type="number" id="height" name="height" value="297"> <!-- Default: A4 height (297mm) -->
+  <br>
+  <label for="marginTop">Top Margin (mm):</label>
+  <input type="number" id="marginTop" name="marginTop" value="20"> <!-- Default: 20mm -->
+  <br>
+  <label for="marginRight">Right Margin (mm):</label>
+  <input type="number" id="marginRight" name="marginRight" value="20"> <!-- Default: 20mm -->
+  <br>
+  <label for="marginBottom">Bottom Margin (mm):</label>
+  <input type="number" id="marginBottom" name="marginBottom" value="20"> <!-- Default: 20mm -->
+  <br>
+  <label for="marginLeft">Left Margin (mm):</label>
+  <input type="number" id="marginLeft" name="marginLeft" value="20"> <!-- Default: 20mm -->
+  <br>
+  <input type="submit" value="Print">
+</form>
+
+<script>
+  function setPageSizeAndMargins() {
+    // Get user input for page width, height, and margins
+    var width = document.getElementById('width').value;
+    var height = document.getElementById('height').value;
+    var marginTop = document.getElementById('marginTop').value;
+    var marginRight = document.getElementById('marginRight').value;
+    var marginBottom = document.getElementById('marginBottom').value;
+    var marginLeft = document.getElementById('marginLeft').value;
+
+    // Set CSS variables to control page size and margins
+    document.documentElement.style.setProperty('--page-width', width + 'mm');
+    document.documentElement.style.setProperty('--page-height', height + 'mm');
+    document.documentElement.style.setProperty('--margin-top', marginTop + 'mm');
+    document.documentElement.style.setProperty('--margin-right', marginRight + 'mm');
+    document.documentElement.style.setProperty('--margin-bottom', marginBottom + 'mm');
+    document.documentElement.style.setProperty('--margin-left', marginLeft + 'mm');
+
+    // Trigger printing
+    window.print();
+
+    // Prevent form submission from refreshing the page
+    return false;
+  }
+</script>
+</body>
+</html>
