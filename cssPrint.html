@@ -36,6 +36,10 @@
         display: none; /* Hide elements with this class when printing */
       }
 
+      .page-break {
+        page-break-after: always;
+      }
+
       /* Use CSS variables to set custom page width, height, and margins */
       @page {
         size: var(--page-width) var(--page-height); /* Set page size using CSS variables */
@@ -46,7 +50,7 @@
 </head>
 <body>
 <h1>Custom Page Size and Margin Print</h1>
-<p>This is a demo of how to allow users to specify the page width, height, and margins before printing.</p>
+<p class="page-break">This is a demo of how to allow users to specify the page width, height, and margins before printing.</p>
 <p>This paragraph will appear in both screen and print.</p>
 <p class="hide-on-print">This paragraph will be hidden when printing.</p>
 
